@@ -1,0 +1,6 @@
+var src_files = $(all-recursive .*\.cpp)
+
+goal example {
+    g++ -Isrc %(src_files) -o example
+    ./example
+}
