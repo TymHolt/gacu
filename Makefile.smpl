@@ -1,6 +1,9 @@
-var src_files = $(all-recursive .*\.cpp)
+var cpp_files = $(all-recursive .*\.cpp)
+var c_files = $(all-recursive .*\.c)
+var compile_flags = -Isrc
+var link_flags = -lGL -lglfw
 
-goal example {
-    g++ -Isrc %(src_files) -o example
+goal run-example {
+	g++ %(compile_flags) %(cpp_files) %(c_files) %(link_flags) -o example
     ./example
 }

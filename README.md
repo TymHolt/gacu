@@ -1,16 +1,19 @@
 # Graphics Application Core Utilities (GACU)
 
-Gacur provides basic utilities for rendering real-time graphics. It is intended to be plugged into a project in source code form, already containing most of its dependencies.
+Gacu provides basic utilities for rendering real-time graphics. It is intended to be plugged into a project in source code form, already containing most of its dependencies.
 
 Dependencies which need to be installed for building:
 - GLFW3
 - gcc / g++
 
+Requirements for applications to run:
+- OpenGL 3.3 or higher
+
 ## Run an example
 
 To run an example of this projects abilities run
 
-> smplmake example
+> smplmake run-example
 
 Using the build tool [smpl-make](https://github.com/TymHolt/smpl-make/releases).
 
