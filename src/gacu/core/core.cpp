@@ -39,6 +39,14 @@ bool gacu::Update(float *delta_time) {
     *delta_time = (float) (current_update_time - last_update_time);
     last_update_time = current_update_time;
 
+    int framebuffer_width;
+    int frame_buffer_height;
+    glfwGetFramebufferSize(glfw_window_handle, &framebuffer_width, &frame_buffer_height);
+    glViewport(0, 0, framebuffer_width, frame_buffer_height);
+
+    glClearColor(34.0f / 255.0f, 40.0f / 255.0f, 49.0f / 255.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     return !glfwWindowShouldClose(glfw_window_handle);
 }
 
