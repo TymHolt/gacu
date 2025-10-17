@@ -1,5 +1,8 @@
+#include <stdexcept>
 #include <gacu/libs/glad/glad.h>
 #include <gacu/core/basic_3d.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include <gacu/libs/stb/stb_image.h>
 
 gacu::BasicMesh3d::BasicMesh3d(float *data, unsigned int data_length, unsigned int *indices,
     unsigned int indices_length) {
@@ -57,6 +60,51 @@ void gacu::BasicMesh3d::DrawCall() {
     glDrawElements(GL_TRIANGLES, m_vertex_count, GL_UNSIGNED_INT, 0);
 }
 
+
+gacu::BasicTexture::BasicTexture(unsigned char* data, size_t width, size_t height) {
+    glGenTextures(1, &m_gl_texture_id);
+    glBindTexture(GL_TEXTURE_2D, m_gl_texture_id);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+ 
+gacu::BasicTexture::~BasicTexture() {
+    glDeleteTextures(1, &m_gl_texture_id);
+}
+
+void gacu::BasicTexture::Activate() {
+    glBindTexture(GL_TEXTURE_2D, m_gl_texture_id);
+}
+
+void gacu::BasicTexture::Deactivate() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+gacu::BasicTexture *gacu::LoadTexture(std::string path) {
+    stbi_set_flip_vertically_on_load(true);
+
+    const char *path_c_string = path.c_str();
+    int width;
+    int height;
+    int nr_channels;
+    unsigned char *data = stbi_load(path_c_string, &width, &height, &nr_channels, 4);
+
+    if (!data) {
+        stbi_image_free(data);
+        throw std::runtime_error(std::string("Failed to load texture " + path));
+    }
+
+    BasicTexture *texture = new BasicTexture(data, width, height);
+    stbi_image_free(data);
+    return texture;
+}
+
 gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
     std::string vertex_shader_source =
         "#version 330 core\n"
@@ -88,16 +136,16 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
         "\n"
         "uniform float u_use_texture;\n"
         "uniform sampler2D u_texture;\n"
+        "uniform vec3 u_color;\n"
         "\n"
         "out vec4 o_color;\n"
         "\n"
         "void main() {\n"
         "    vec3 keepv = vec3(0.0f, 0.0f, 0.001f) * p_normal;\n"
         "\n"
-        "    vec3 vertex_color = p_material;\n"
         "    vec4 texture_color_raw = texture(u_texture, vec2(p_material.x, p_material.y));\n"
         "    vec3 texture_color = texture_color_raw.xyz;\n"
-        "    vec3 color = vertex_color * (1.0f - u_use_texture) + texture_color * u_use_texture;\n"
+        "    vec3 color = u_color * (1.0f - u_use_texture) + texture_color * u_use_texture;\n"
         "\n"
         "    o_color = vec4(color + keepv, 1.0f);\n"
         "}\n";
@@ -106,18 +154,35 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
 
     m_texture_upload_location = m_shader_program->GetGLUploadLocation("u_texture");
     m_use_texture_upload_location = m_shader_program->GetGLUploadLocation("u_use_texture");
+    m_color_upload_location = m_shader_program->GetGLUploadLocation("u_color");
 }
 
 gacu::BasicObjectRenderer3d::~BasicObjectRenderer3d() {
     delete m_shader_program;
 }
 
-void gacu::BasicObjectRenderer3d::RenderObject(BasicMesh3d *mesh) {
+void gacu::BasicObjectRenderer3d::RenderObjectTextured(BasicMesh3d *mesh, BasicTexture *texture) {
     m_shader_program->Activate();
     mesh->Activate();
 
     m_shader_program->UploadInt(m_texture_upload_location, 0);
+    m_shader_program->UploadFloat(m_use_texture_upload_location, 1.0f);
+
+    texture->Activate();
+
+    mesh->DrawCall();
+
+    texture->Deactivate();
+    mesh->Deactivate();
+    m_shader_program->Deactivate();
+}
+
+void gacu::BasicObjectRenderer3d::RenderObjectColored(BasicMesh3d *mesh, float red, float green, float blue) {
+    m_shader_program->Activate();
+    mesh->Activate();
+
     m_shader_program->UploadFloat(m_use_texture_upload_location, 0.0f);
+    m_shader_program->UploadFloat3(m_color_upload_location, red, green, blue);
 
     mesh->DrawCall();
 

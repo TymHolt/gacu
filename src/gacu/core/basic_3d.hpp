@@ -20,15 +20,29 @@ namespace gacu {
             void DrawCall();
     };
 
+    class BasicTexture {
+        private:
+            unsigned int m_gl_texture_id;
+        public:
+            BasicTexture(unsigned char* data = 0, size_t width = 0, size_t height = 0);
+            ~BasicTexture();
+            void Activate();
+            void Deactivate();
+    };
+
+    BasicTexture *LoadTexture(std::string path);
+
     class BasicObjectRenderer3d {
         private:
             ShaderProgram *m_shader_program;
             unsigned int m_texture_upload_location;
             unsigned int m_use_texture_upload_location;
+            unsigned int m_color_upload_location;
         public:
             BasicObjectRenderer3d();
             ~BasicObjectRenderer3d();
-            void RenderObject(BasicMesh3d *mesh);
+            void RenderObjectTextured(BasicMesh3d *mesh, BasicTexture *texture);
+            void RenderObjectColored(BasicMesh3d *mesh, float red, float green, float blue);
     };
 }
 

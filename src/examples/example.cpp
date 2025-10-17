@@ -21,7 +21,7 @@ int main() {
 
     float delta_time;
     while (gacu::Update(&delta_time)) {
-        renderer->RenderObject(mesh);
+        renderer->RenderObjectColored(mesh, 1.0f, 0.0f, 0.0f);
     }
 
     delete mesh;

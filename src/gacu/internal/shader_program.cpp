@@ -45,7 +45,7 @@ gacu::ShaderProgram::ShaderProgram(std::string vertex_shader_source,
         glDeleteShader(gl_vertex_shader_handle);
         glDeleteShader(gl_fragment_shader_handle);
         glDeleteProgram(m_gl_program_handle);
-        return;
+        throw std::runtime_error(std::string(info_log));
     }
 
     glDeleteShader(gl_vertex_shader_handle);
