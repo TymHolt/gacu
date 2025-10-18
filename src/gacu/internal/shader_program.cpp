@@ -69,6 +69,11 @@ unsigned int gacu::ShaderProgram::GetGLUploadLocation(std::string name) {
     return glGetUniformLocation(m_gl_program_handle, name_c_string);
 }
 
+
+void gacu::ShaderProgram::UploadMatrix4(unsigned int gl_upload_location, glm::mat4 matrix) {
+    glUniformMatrix4fv(gl_upload_location, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
 void gacu::ShaderProgram::UploadFloat(unsigned int gl_upload_location, float f) {
     glUniform1f(gl_upload_location, f);
 }

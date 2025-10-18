@@ -18,10 +18,12 @@ int main() {
 
     gacu::BasicMesh3d *mesh = new gacu::BasicMesh3d(vertices, 4 * 9, indices, 6);
     gacu::BasicObjectRenderer3d *renderer = new gacu::BasicObjectRenderer3d();
+    gacu::BasicCamera3d camera(0.0f, 0.0f, 3.0f, 90.0f, 1.0f, 0.1f, 1024.0f);
 
     float delta_time;
     while (gacu::Update(&delta_time)) {
-        renderer->RenderObjectColored(mesh, 1.0f, 0.0f, 0.0f);
+        camera.ApplyGlobalAspect();
+        renderer->RenderObjectColored(mesh, &camera, 1.0f, 0.0f, 0.0f);
     }
 
     delete mesh;

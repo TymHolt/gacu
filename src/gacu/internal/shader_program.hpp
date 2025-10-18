@@ -2,6 +2,7 @@
 #define SHADER_PROGRAM_HPP
 
 #include <string>
+#include <gacu/libs/math.hpp>
 
 namespace gacu {
 
@@ -15,6 +16,7 @@ namespace gacu {
             void Activate();
             void Deactivate();
             unsigned int GetGLUploadLocation(std::string name);
+            void UploadMatrix4(unsigned int gl_upload_location, glm::mat4 matrix);
             void UploadFloat(unsigned int gl_upload_location, float f);
             void UploadFloat3(unsigned int gl_upload_location, float x, float y, float z);
             void UploadInt(unsigned int gl_upload_location, int i);

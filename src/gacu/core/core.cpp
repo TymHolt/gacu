@@ -31,6 +31,10 @@ void gacu::Init(int width, int height, const char *title) {
     last_update_time = (float) glfwGetTime();
 }
 
+void gacu::GetSize(int *width, int *height) {
+    glfwGetFramebufferSize(glfw_window_handle, width, height);
+}
+
 bool gacu::Update(float *delta_time) {
     glfwSwapBuffers(glfw_window_handle);
     glfwPollEvents();

@@ -4,6 +4,7 @@
 namespace gacu {
     
     void Init(int width, int height, const char *title);
+    void GetSize(int *width, int *height);
     bool Update(float *delta_time);
     void Terminate();
 };
