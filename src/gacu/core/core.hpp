@@ -7,6 +7,7 @@ namespace gacu {
     void GetSize(int *width, int *height);
     bool Update(float *delta_time);
     void Terminate();
+    bool IsKeyPressed(int glfw_key);
 };
 
 #endif

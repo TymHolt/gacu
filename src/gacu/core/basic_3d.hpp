@@ -10,9 +10,12 @@ namespace gacu {
         private:
             bool m_recalculate_matrices;
             glm::mat4 m_transform;
+            glm::mat4 m_rotation;
             float m_x;
             float m_y;
             float m_z;
+            float m_pitch;
+            float m_yaw;
             float m_fov;
             float m_aspect;
             float m_near;
@@ -20,23 +23,29 @@ namespace gacu {
             
             void RecalculateMatrices();
         public:
-            BasicCamera3d(float x = 0.0f, float y = 0.0f, float z = 0.0f, float fov = 0.0f, 
-                float aspect = 0.0f, float near = 0.0f, float far = 0.0f);
+            BasicCamera3d(float fov = 0.0f, float aspect = 0.0f, float near = 0.0f,
+                float far = 0.0f);
             glm::mat4 GetTransformMatrix();
+            glm::mat4 GetRotationMatrix();
+            void MoveTransformed(glm::vec3 move_vector);
             void ApplyGlobalAspect();
             void SetX(float x);
             void SetY(float y);
-            void setZ(float z);
+            void SetZ(float z);
+            void SetPitch(float pitch);
+            void SetYaw(float yaw);
             void SetFov(float fov);
             void SetAspect(float aspect);
-            void setNearClip(float near);
-            void setFarClip(float far);
+            void SetNearClip(float near);
+            void SetFarClip(float far);
             float GetX();
             float GetY();
             float GetZ();
+            float GetPitch();
+            float GetYaw();
             float GetFov();
             float GetAspect();
-            float getNearClip();
+            float GetNearClip();
             float GetFarClip();
     };
 

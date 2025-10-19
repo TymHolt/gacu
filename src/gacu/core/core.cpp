@@ -57,3 +57,7 @@ bool gacu::Update(float *delta_time) {
 void gacu::Terminate() {
     glfwTerminate();
 }
+
+bool gacu::IsKeyPressed(int glfw_key) {
+    return glfwGetKey(glfw_window_handle, glfw_key) == GLFW_PRESS;
+}
