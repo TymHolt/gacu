@@ -114,13 +114,14 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
         "layout (location = 2) in vec3 a_normal;\n"
         "\n"
         "uniform mat4 u_camera_transform;\n"
+        "uniform mat4 u_object_transform;\n"
         "\n"
         "out vec3 p_position;\n"
         "out vec3 p_material;\n"
         "out vec3 p_normal;\n"
         "\n"
         "void main() {\n"
-        "   vec4 position = u_camera_transform * vec4(a_position, 1.0);\n"
+        "   vec4 position = u_camera_transform * u_object_transform * vec4(a_position, 1.0);\n"
         "\n"
         "   p_position = position.xyz;\n"
         "   p_material = a_material;\n"
@@ -158,6 +159,7 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
     m_use_texture_upload_location = m_shader_program->GetGLUploadLocation("u_use_texture");
     m_color_upload_location = m_shader_program->GetGLUploadLocation("u_color");
     m_camera_transform_location = m_shader_program->GetGLUploadLocation("u_camera_transform");
+    m_object_transform_location = m_shader_program->GetGLUploadLocation("u_object_transform");
 }
 
 gacu::BasicObjectRenderer3d::~BasicObjectRenderer3d() {
@@ -175,12 +177,14 @@ void gacu::BasicObjectRenderer3d::After() {
     glDisable(GL_DEPTH_TEST);
 }
 
-void gacu::BasicObjectRenderer3d::RenderObjectTextured(BasicMesh3d *mesh, BasicCamera3d *camera, 
-    BasicTexture *texture) {
+void gacu::BasicObjectRenderer3d::RenderObjectTextured(BasicMesh3d *mesh,
+    BasicObjectTransform3d *transform, BasicCamera3d *camera, BasicTexture *texture) {
     
     Before(camera);
     mesh->Activate();
 
+
+    m_shader_program->UploadMatrix4(m_object_transform_location, transform->GetTransformMatrix());
     m_shader_program->UploadInt(m_texture_upload_location, 0);
     m_shader_program->UploadFloat(m_use_texture_upload_location, 1.0f);
 
@@ -193,12 +197,13 @@ void gacu::BasicObjectRenderer3d::RenderObjectTextured(BasicMesh3d *mesh, BasicC
     After();
 }
 
-void gacu::BasicObjectRenderer3d::RenderObjectColored(BasicMesh3d *mesh, BasicCamera3d *camera, 
-    float red, float green, float blue) {
+void gacu::BasicObjectRenderer3d::RenderObjectColored(BasicMesh3d *mesh,
+    BasicObjectTransform3d *transform, BasicCamera3d *camera, float red, float green, float blue) {
     
     Before(camera);
     mesh->Activate();
 
+    m_shader_program->UploadMatrix4(m_object_transform_location, transform->GetTransformMatrix());
     m_shader_program->UploadFloat(m_use_texture_upload_location, 0.0f);
     m_shader_program->UploadFloat3(m_color_upload_location, red, green, blue);
 

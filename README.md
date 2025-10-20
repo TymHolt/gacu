@@ -17,6 +17,9 @@ To run an example of this projects abilities run
 
 Using the build tool [smpl-make](https://github.com/TymHolt/smpl-make/releases).
 
+In this example, use the controls W, A, S, D to move and arrow keys to look around.
+While pressing space, the controls affect the object shown instead of the camera.
+
 ## Licensing
 
 For redistribution of this source code you should always check out the gacu/libs directory. This software is licensed under the *MIT License*, but some of the contained libraries may be licensed differently.

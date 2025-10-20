@@ -76,10 +76,49 @@ namespace gacu {
 
     BasicTexture *LoadTexture(std::string path);
 
+    class BasicObjectTransform3d {
+        private:
+            bool m_recalculate_matrices;
+            glm::mat4 m_transform;
+            float m_x;
+            float m_y;
+            float m_z;
+            float m_pitch;
+            float m_yaw;
+            float m_roll;
+            float m_scale_x;
+            float m_scale_y;
+            float m_scale_z;
+
+            void RecalculateMatrices();
+        public:
+            BasicObjectTransform3d();
+            glm::mat4 GetTransformMatrix();
+            void SetX(float x);
+            void SetY(float y);
+            void SetZ(float z);
+            void SetPitch(float pitch);
+            void SetYaw(float yaw);
+            void SetRoll(float roll);
+            void SetScaleX(float scale_x);
+            void SetScaleY(float scale_y);
+            void SetScaleZ(float scale_z);
+            float GetX();
+            float GetY();
+            float GetZ();
+            float GetPitch();
+            float GetYaw();
+            float GetRoll();
+            float GetScaleX();
+            float GetScaleY();
+            float GetScaleZ();
+    };
+
     class BasicObjectRenderer3d {
         private:
             ShaderProgram *m_shader_program;
             unsigned int m_camera_transform_location;
+            unsigned int m_object_transform_location;
             unsigned int m_texture_upload_location;
             unsigned int m_use_texture_upload_location;
             unsigned int m_color_upload_location;
@@ -89,9 +128,10 @@ namespace gacu {
         public:
             BasicObjectRenderer3d();
             ~BasicObjectRenderer3d();
-            void RenderObjectTextured(BasicMesh3d *mesh, BasicCamera3d *camera, BasicTexture *texture);
-            void RenderObjectColored(BasicMesh3d *mesh, BasicCamera3d *camera, float red, float green,
-                float blue);
+            void RenderObjectTextured(BasicMesh3d *mesh, BasicObjectTransform3d *transform, 
+                BasicCamera3d *camera, BasicTexture *texture);
+            void RenderObjectColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
+                BasicCamera3d *camera, float red, float green, float blue);
     };
 }
 
