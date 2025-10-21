@@ -80,6 +80,7 @@ namespace gacu {
         private:
             bool m_recalculate_matrices;
             glm::mat4 m_transform;
+            glm::mat3 m_rotation;
             float m_x;
             float m_y;
             float m_z;
@@ -94,6 +95,7 @@ namespace gacu {
         public:
             BasicObjectTransform3d();
             glm::mat4 GetTransformMatrix();
+            glm::mat3 GetRotationMatrix();
             void SetX(float x);
             void SetY(float y);
             void SetZ(float z);
@@ -114,27 +116,56 @@ namespace gacu {
             float GetScaleZ();
     };
 
+    class BasicIllumination3d {
+        private:
+            glm::vec3 m_ambient_color;
+            float m_ambient_strength;
+            glm::vec3 m_sun_color;
+            glm::vec3 m_sun_direction;
+            float m_sun_strength;
+        public:
+            BasicIllumination3d();
+            void SetAmbient(glm::vec3 color, float strength);
+            void SetSun(glm::vec3 direction, glm::vec3 color, float strength);
+            glm::vec3 GetAmbientColor();
+            float GetAmbientStrength();
+            glm::vec3 GetSunColor();
+            glm::vec3 GetSunDirection();
+            float GetSunStrength();
+    };
+
     class BasicObjectRenderer3d {
         private:
             ShaderProgram *m_shader_program;
             unsigned int m_camera_transform_location;
             unsigned int m_object_transform_location;
-            unsigned int m_texture_upload_location;
-            unsigned int m_use_texture_upload_location;
-            unsigned int m_use_vertex_color_upload_location;
-            unsigned int m_color_upload_location;
+            unsigned int m_object_rotation_location;
+            unsigned int m_texture_location;
+            unsigned int m_use_texture_location;
+            unsigned int m_use_vertex_color_location;
+            unsigned int m_color_location;
+            unsigned int m_ambient_color_location;
+            unsigned int m_ambient_strength_location;
+            unsigned int m_sun_color_location;
+            unsigned int m_sun_direction_location;
+            unsigned int m_sun_strength_location;
 
-            void Before(BasicCamera3d *camera);
+            BasicCamera3d m_camera;
+            BasicIllumination3d m_illumination;
+
+            void Before();
             void After();
+            void UploadTransform(BasicObjectTransform3d *transform);
         public:
             BasicObjectRenderer3d();
             ~BasicObjectRenderer3d();
+            void SetCamera(BasicCamera3d camera);
+            void SetIllumination(BasicIllumination3d illumination);
             void RenderObjectTextured(BasicMesh3d *mesh, BasicObjectTransform3d *transform, 
-                BasicCamera3d *camera, BasicTexture *texture);
+                BasicTexture *texture);
             void RenderObjectColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
-                BasicCamera3d *camera, float red, float green, float blue);
-            void RenderObjectVertexColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
-                BasicCamera3d *camera);
+                float red, float green, float blue);
+            void RenderObjectVertexColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform);
     };
 }
 

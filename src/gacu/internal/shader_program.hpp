@@ -16,6 +16,7 @@ namespace gacu {
             void Activate();
             void Deactivate();
             unsigned int GetGLUploadLocation(std::string name);
+            void UploadMatrix3(unsigned int gl_upload_location, glm::mat3 matrix);
             void UploadMatrix4(unsigned int gl_upload_location, glm::mat4 matrix);
             void UploadFloat(unsigned int gl_upload_location, float f);
             void UploadFloat3(unsigned int gl_upload_location, float x, float y, float z);

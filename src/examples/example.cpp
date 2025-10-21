@@ -70,14 +70,16 @@ int main() {
     gacu::BasicObjectRenderer3d *renderer = new gacu::BasicObjectRenderer3d();
     gacu::BasicCamera3d camera(90.0f, 1.0f, 0.1f, 1024.0f);
     gacu::BasicObjectTransform3d transform;
+    gacu::BasicIllumination3d illumination;
 
     // Update + render loop
     float delta_time;
     while (gacu::Update(&delta_time)) {
         UpdateObject(&transform, delta_time);
         UpdateCamera(&camera, delta_time);
-        //renderer->RenderObjectColored(mesh, &transform, &camera, 1.0f, 0.0f, 0.0f);
-        renderer->RenderObjectVertexColored(mesh, &transform, &camera);
+        renderer->SetCamera(camera);
+        renderer->SetIllumination(illumination);
+        renderer->RenderObjectVertexColored(mesh, &transform);
     }
 
     // Clean up

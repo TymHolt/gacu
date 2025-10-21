@@ -19,9 +19,14 @@ void gacu::BasicObjectTransform3d::RecalculateMatrices() {
     m_transform = glm::mat4(1.0f);
     m_transform = glm::translate(m_transform, glm::vec3(m_x, m_y, m_z));
     m_transform = glm::scale(m_transform, glm::vec3(m_scale_x, m_scale_y, m_scale_z));
-    m_transform = glm::rotate(m_transform, glm::radians(m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
-    m_transform = glm::rotate(m_transform, glm::radians(m_pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-    m_transform = glm::rotate(m_transform, glm::radians(m_roll), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    glm::mat4 rotation = glm::mat4(1.0f);
+    rotation = glm::rotate(rotation, glm::radians(m_yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation = glm::rotate(rotation, glm::radians(m_pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotation = glm::rotate(rotation, glm::radians(m_roll), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    m_transform *= rotation;
+    m_rotation = glm::mat3(rotation);
 }
 
 glm::mat4 gacu::BasicObjectTransform3d::GetTransformMatrix() {
@@ -31,6 +36,15 @@ glm::mat4 gacu::BasicObjectTransform3d::GetTransformMatrix() {
     }
 
     return m_transform;
+}
+
+glm::mat3 gacu::BasicObjectTransform3d::GetRotationMatrix() {
+        if (m_recalculate_matrices) {
+        m_recalculate_matrices = false;
+        RecalculateMatrices();
+    }
+
+    return m_rotation;
 }
 
 void gacu::BasicObjectTransform3d::SetX(float x) {

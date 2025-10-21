@@ -66,9 +66,17 @@ void gacu::ShaderProgram::Deactivate() {
 
 unsigned int gacu::ShaderProgram::GetGLUploadLocation(std::string name) {
     const char *name_c_string = name.c_str();
-    return glGetUniformLocation(m_gl_program_handle, name_c_string);
+    unsigned int location = glGetUniformLocation(m_gl_program_handle, name_c_string);
+
+    if (location == -1)
+        throw std::runtime_error(std::string("Location not found: " + name));
+
+    return location;
 }
 
+void gacu::ShaderProgram::UploadMatrix3(unsigned int gl_upload_location, glm::mat3 matrix) {
+    glUniformMatrix3fv(gl_upload_location, 1, GL_FALSE, glm::value_ptr(matrix));
+}
 
 void gacu::ShaderProgram::UploadMatrix4(unsigned int gl_upload_location, glm::mat4 matrix) {
     glUniformMatrix4fv(gl_upload_location, 1, GL_FALSE, glm::value_ptr(matrix));
