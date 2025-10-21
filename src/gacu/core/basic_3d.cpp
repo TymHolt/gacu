@@ -139,16 +139,20 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
         "\n"
         "uniform float u_use_texture;\n"
         "uniform sampler2D u_texture;\n"
+        "uniform float u_use_vertex_color;\n"
         "uniform vec3 u_color;\n"
         "\n"
         "out vec4 o_color;\n"
         "\n"
         "void main() {\n"
-        "    vec3 keepv = vec3(0.0f, 0.0f, 0.001f) * p_normal;\n"
-        "\n"
         "    vec4 texture_color_raw = texture(u_texture, vec2(p_material.x, p_material.y));\n"
         "    vec3 texture_color = texture_color_raw.xyz;\n"
-        "    vec3 color = u_color * (1.0f - u_use_texture) + texture_color * u_use_texture;\n"
+        "\n"
+        "    vec3 base_color = u_color * (1.0f - u_use_vertex_color) + p_material * u_use_vertex_color;\n"
+        "\n"
+        "    vec3 color = base_color * (1.0f - u_use_texture) + texture_color * u_use_texture;\n"
+        "\n"
+        "    vec3 keepv = vec3(0.0f, 0.0f, 0.001f) * p_normal;\n"
         "\n"
         "    o_color = vec4(color + keepv, 1.0f);\n"
         "}\n";
@@ -160,6 +164,7 @@ gacu::BasicObjectRenderer3d::BasicObjectRenderer3d() {
     m_color_upload_location = m_shader_program->GetGLUploadLocation("u_color");
     m_camera_transform_location = m_shader_program->GetGLUploadLocation("u_camera_transform");
     m_object_transform_location = m_shader_program->GetGLUploadLocation("u_object_transform");
+    m_use_vertex_color_upload_location = m_shader_program->GetGLUploadLocation("u_use_vertex_color");
 }
 
 gacu::BasicObjectRenderer3d::~BasicObjectRenderer3d() {
@@ -205,6 +210,7 @@ void gacu::BasicObjectRenderer3d::RenderObjectColored(BasicMesh3d *mesh,
 
     m_shader_program->UploadMatrix4(m_object_transform_location, transform->GetTransformMatrix());
     m_shader_program->UploadFloat(m_use_texture_upload_location, 0.0f);
+    m_shader_program->UploadFloat(m_use_vertex_color_upload_location, 0.0f);
     m_shader_program->UploadFloat3(m_color_upload_location, red, green, blue);
 
     mesh->DrawCall();
@@ -212,4 +218,20 @@ void gacu::BasicObjectRenderer3d::RenderObjectColored(BasicMesh3d *mesh,
     mesh->Deactivate();
     After();
 }
+
+void gacu::BasicObjectRenderer3d::RenderObjectVertexColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
+    BasicCamera3d *camera) {
     
+    Before(camera);
+    mesh->Activate();
+
+    m_shader_program->UploadMatrix4(m_object_transform_location, transform->GetTransformMatrix());
+    m_shader_program->UploadFloat(m_use_texture_upload_location, 0.0f);
+    m_shader_program->UploadFloat(m_use_vertex_color_upload_location, 1.0f);
+
+    mesh->DrawCall();
+
+    mesh->Deactivate();
+    After();        
+}
+   

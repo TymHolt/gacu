@@ -121,6 +121,7 @@ namespace gacu {
             unsigned int m_object_transform_location;
             unsigned int m_texture_upload_location;
             unsigned int m_use_texture_upload_location;
+            unsigned int m_use_vertex_color_upload_location;
             unsigned int m_color_upload_location;
 
             void Before(BasicCamera3d *camera);
@@ -132,6 +133,8 @@ namespace gacu {
                 BasicCamera3d *camera, BasicTexture *texture);
             void RenderObjectColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
                 BasicCamera3d *camera, float red, float green, float blue);
+            void RenderObjectVertexColored(BasicMesh3d *mesh, BasicObjectTransform3d *transform,
+                BasicCamera3d *camera);
     };
 }
 

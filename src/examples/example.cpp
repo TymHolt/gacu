@@ -11,19 +11,62 @@ int main() {
 
     // Define quad
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
-        0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
-        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f
+        1.0f,  1.0f, -1.0f,   0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
+        1.0f, -1.0f, -1.0f,   0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f, 
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+
+        1.0f,  1.0f, 1.0f,   0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
+        1.0f, -1.0f, 1.0f,   0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
+        -1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f, 
+        -1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+
+        -1.0f, 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        -1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+        
+        1.0f, 1.0f, -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+
+        -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,   0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, -1.0f,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        
+        -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f,  0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 1.0f,   0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f
     };
 
     unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 2,
+        2, 3, 0,
+
+        4, 5, 6,
+        6, 7, 4,
+
+        8, 9, 10,
+        10, 11, 8,
+
+        12, 13, 14,
+        14, 15, 12,
+
+        16, 17, 18,
+        18, 19, 16,
+
+        20, 21, 22,
+        22, 23, 20
     };
 
+    size_t vertex_count = sizeof(vertices) / sizeof(float);
+    size_t index_count = sizeof(indices) / sizeof(unsigned int);
+
     // Init all objects needed
-    gacu::BasicMesh3d *mesh = new gacu::BasicMesh3d(vertices, 4 * 9, indices, 6);
+    gacu::BasicMesh3d *mesh = new gacu::BasicMesh3d(vertices, vertex_count * 9, indices, index_count);
     gacu::BasicObjectRenderer3d *renderer = new gacu::BasicObjectRenderer3d();
     gacu::BasicCamera3d camera(90.0f, 1.0f, 0.1f, 1024.0f);
     gacu::BasicObjectTransform3d transform;
@@ -33,7 +76,8 @@ int main() {
     while (gacu::Update(&delta_time)) {
         UpdateObject(&transform, delta_time);
         UpdateCamera(&camera, delta_time);
-        renderer->RenderObjectColored(mesh, &transform, &camera, 1.0f, 0.0f, 0.0f);
+        //renderer->RenderObjectColored(mesh, &transform, &camera, 1.0f, 0.0f, 0.0f);
+        renderer->RenderObjectVertexColored(mesh, &transform, &camera);
     }
 
     // Clean up
